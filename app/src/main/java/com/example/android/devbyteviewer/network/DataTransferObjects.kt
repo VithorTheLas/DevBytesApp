@@ -36,6 +36,7 @@ import com.squareup.moshi.JsonClass
  *   "videos": []
  * }
  */
+
 @JsonClass(generateAdapter = true)
 data class NetworkVideoContainer(val videos: List<NetworkVideo>)
 
