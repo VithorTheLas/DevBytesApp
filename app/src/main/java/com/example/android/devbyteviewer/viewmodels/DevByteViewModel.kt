@@ -18,6 +18,12 @@
 package com.example.android.devbyteviewer.viewmodels
 
 import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkInfo
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -36,14 +42,21 @@ import kotlinx.coroutines.launch
  * reference to applications across rotation since Application is never recreated during activity
  * or fragment lifecycle events.
  */
+@RequiresApi(Build.VERSION_CODES.M)
 class DevByteViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = getDatabase(application)
     private val videosRepository = VideosRepository(database)
 
     init {
-        viewModelScope.launch {
-            videosRepository.refreshVideos()
+
+        val cm = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val isConnected: Boolean = cm.isDefaultNetworkActive
+
+        if(isConnected) {
+            viewModelScope.launch {
+                videosRepository.refreshVideos()
+            }
         }
     }
 
